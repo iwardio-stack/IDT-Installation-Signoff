@@ -19,10 +19,12 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Extract project ZIP
-        run: |
-          mkdir project
-          unzip -q IDT-Installation-Signoff-NewProject.zip -d project
+      - - name: Extract project ZIP
+  run: |
+    mkdir project
+    ZIP_FILE=$(find . -maxdepth 2 -iname "*.zip" | head -n 1)
+    echo "Found ZIP: $ZIP_FILE"
+    unzip -q "$ZIP_FILE" -d project
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
