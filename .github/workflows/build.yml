@@ -21,11 +21,24 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Extract ZIP
+      - name: Find valid ZIP
         run: |
           mkdir project
-          ZIP_FILE=$(find . -maxdepth 2 -type f -iname "*.zip" | head -n 1)
-          echo "Found ZIP: $ZIP_FILE"
+          ZIP_FILE=""
+
+          while IFS= read -r file; do
+            if unzip -t "$file" >/dev/null 2>&1; then
+              ZIP_FILE="$file"
+              break
+            fi
+          done < <(find . -type f -iname "*.zip")
+
+          if [ -z "$ZIP_FILE" ]; then
+            echo "No valid ZIP file found."
+            exit 1
+          fi
+
+          echo "Using: $ZIP_FILE"
           unzip -q "$ZIP_FILE" -d project
 
       - name: Set up Gradle
