@@ -1,16 +1,18 @@
+
 name: Build IDT APK
 
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Java 17
@@ -19,12 +21,12 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - - name: Extract project ZIP
-  run: |
-    mkdir project
-    ZIP_FILE=$(find . -maxdepth 2 -iname "*.zip" | head -n 1)
-    echo "Found ZIP: $ZIP_FILE"
-    unzip -q "$ZIP_FILE" -d project
+      - name: Extract ZIP
+        run: |
+          mkdir project
+          ZIP_FILE=$(find . -maxdepth 2 -type f -iname "*.zip" | head -n 1)
+          echo "Found ZIP: $ZIP_FILE"
+          unzip -q "$ZIP_FILE" -d project
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
